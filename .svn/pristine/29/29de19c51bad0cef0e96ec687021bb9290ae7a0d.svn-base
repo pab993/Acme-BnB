@@ -1,0 +1,23 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+finder.destination = Destination 
+finder.minPrice = Minimum Price
+finder.maxPrice = Maximum Price
+finder.keyword = KeyWord
+
+finder.search = Find
+finder.cancel = Cancel
+finder.commit.error = Cannot commit this operation
+
+property.name			= Name
+property.rate			= Rate
+property.description	= Description
+property.address		= Address 
+property.bookCount		= Book count
+property.newBooking		= Book

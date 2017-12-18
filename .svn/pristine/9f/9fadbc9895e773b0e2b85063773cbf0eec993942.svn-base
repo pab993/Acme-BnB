@@ -1,0 +1,18 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+attributeValue.name		= Name
+attributeValue.value	= Valor
+attributeValue.edit	= Edit
+attributeValue.create	= Create
+attributeValue.submit	= Save
+attributeValue.delete	= Delete
+attributeValue.cancel	= Cancel
+attributeValue.commit.error	= Cannot commit this operation
+attributeValue.commit.error.2	= You cannot choose an attribute twice
+choose					= Choose your attribute

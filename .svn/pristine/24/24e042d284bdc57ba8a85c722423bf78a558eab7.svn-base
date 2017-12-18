@@ -1,0 +1,33 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+
+datos.personal = Personal dates
+datos.others	= Others dates
+datos.creditCard = CreditCard dates
+auditor.name	= Name
+auditor.surname = Surname
+auditor.phone = Phone
+auditor.email = Email
+auditor.picture = Picture
+auditor.company = Company
+
+auditor.userAccount = Username
+auditor.password = Password
+auditor.repeatPassword = Repeat Password
+
+auditor.save 				= Register
+auditor.cancel 				= Cancel
+
+datos.socialIdentity 		= Social networks
+socialIdentity.nick			= Nick
+socialIdentity.network		= Network
+socialIdentity.url			= Url
+
+auditor.commit.error = Cannot commit this operation
+auditor.commit.saved = Dates updated

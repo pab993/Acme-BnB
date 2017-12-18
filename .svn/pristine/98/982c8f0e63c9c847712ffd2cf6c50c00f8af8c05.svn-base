@@ -1,0 +1,22 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+audit.createMoment		= Create moment
+audit.text				= Text
+audit.attachments		= Attachments
+audit.property			= Property
+audit.draft				= Draft 
+audit.notDraft			= Not draft
+audit.confirm.notDraft	= Are you sure to finalize this audit?
+
+audit.edit				= Edit
+audit.submit			= Save
+audit.delete			= Delete
+audit.cancel			= Cancel
+
+audit.commit.error	    = Can't complete your action. You have already previously written an audit for that property.

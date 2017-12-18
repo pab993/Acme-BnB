@@ -1,0 +1,132 @@
+
+package controllers.lessor;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import services.BookingService;
+import services.LessorService;
+import services.PropertyService;
+import controllers.AbstractController;
+import domain.Booking;
+import domain.Lessor;
+import domain.Property;
+
+@Controller
+@RequestMapping("/booking/lessor")
+public class BookingLessorController extends AbstractController {
+
+	// Services
+	// ====================================================================================
+
+	@Autowired
+	private PropertyService	propertyService;
+
+	@Autowired
+	private BookingService	bookingService;
+
+	@Autowired
+	private LessorService	lessorService;
+
+
+	// Listing
+	// ====================================================================================
+
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public ModelAndView listByProperty(@RequestParam int propertyId) {
+		ModelAndView result;
+		Collection<Booking> bookings;
+		Property property;
+
+		property = propertyService.findOne(propertyId);
+		bookings = bookingService.findAllByProperty(property);
+
+		result = new ModelAndView("booking/list");
+		result.addObject("bookings", bookings);
+		result.addObject("RequestURI", "booking/lessor/list.do");
+
+		return result;
+	}
+
+	//Edit Status
+	// ====================================================================================
+
+	@RequestMapping(value = "/editStatus", method = RequestMethod.GET)
+	public ModelAndView editStatus(@RequestParam int bookingId) {
+		ModelAndView result;
+		Booking booking;
+
+		booking = bookingService.findOne(bookingId);
+
+		result = createEditModelAndView(booking);
+
+		return result;
+	}
+
+	@RequestMapping(value = "/editStatus", method = RequestMethod.POST, params = "save")
+	public ModelAndView changeStatus(@Valid Booking booking, BindingResult binding) {
+		ModelAndView result;
+
+		booking = bookingService.reconstruct(booking, binding);
+		Lessor lessor = lessorService.findPrincipal();
+
+		if (binding.hasErrors()) {
+			result = createEditModelAndView(booking);
+		} else {
+			try {
+				bookingService.changeStatus(booking);
+				lessorService.calculateAmount2(lessor, booking);
+
+				result = new ModelAndView("redirect:/property/lessor/list.do");
+			} catch (Throwable oops) {
+				result = createEditModelAndView(booking, "booking.commit.error");
+			}
+		}
+		return result;
+	}
+
+	// The ancillary methods 
+	// ====================================================================================
+
+	protected ModelAndView createEditModelAndView(Booking booking) {
+		ModelAndView result;
+
+		result = createEditModelAndView(booking, null);
+
+		return result;
+	}
+
+	protected ModelAndView createEditModelAndView(Booking booking, String message) {
+		ModelAndView result;
+
+//		Collection<Booking> bookingStatus = new ArrayList<Booking>();
+//		Booking booking1 = new Booking();
+//		Booking booking2 = new Booking();
+//		Booking booking3 = new Booking();
+//		
+//		booking1.setStatus("ACCEPTED");
+//		booking2.setStatus("DENIED");
+//		booking3.setStatus("PENDING");
+//		bookingStatus.add(booking1);
+//		bookingStatus.add(booking2);
+//		bookingStatus.add(booking3);
+
+		result = new ModelAndView("booking/editStatus");
+
+		result.addObject("booking", booking);
+		result.addObject("message", message);
+//		result.addObject("bookingStatus", bookingStatus);
+
+		return result;
+	}
+}

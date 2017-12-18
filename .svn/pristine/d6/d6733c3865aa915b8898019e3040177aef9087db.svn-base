@@ -1,0 +1,17 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+attributeName.name	= Name
+attributeName.edit	= Edit
+attributeName.create	= Create
+attributeName.submit	= Save
+attributeName.delete	= Delete
+attributeName.cancel	= Cancel
+attributeName.commit.error	= Cannot commit this operation
+
+socialIdentity.nick				= nick

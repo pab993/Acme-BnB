@@ -1,0 +1,22 @@
+# messages_es.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+audit.createMoment		= Momento de creación
+audit.text				= Texto
+audit.attachments		= Archivos
+audit.property			= Propiedad
+audit.draft				= Borrador 
+audit.notDraft			= No es borrador
+audit.confirm.notDraft	= ¿Está seguro de finalizar esta auditoría?
+
+audit.edit				= Editar
+audit.submit			= Guardar
+audit.delete			= Borrar
+audit.cancel			= Volver
+
+audit.commit.error		= No se puede completar su operación. Usted ya ha escrito anteriormente una auditoría correspondiente a dicha propiedad. 

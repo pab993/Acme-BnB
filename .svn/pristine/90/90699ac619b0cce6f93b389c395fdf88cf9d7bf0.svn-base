@@ -1,0 +1,64 @@
+# messages_es.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+administrator.action.1	= This is the administrator's action 1
+administrator.action.2	= This is the administrator's action 2
+
+
+datos.personal = Datos personales
+datos.socialIdentity = Redes sociales
+datos.creditCard = Datos tarjeta
+administrator.name	= Nombre
+administrator.surname = Apellidos
+administrator.phone = Teléfono
+administrator.email = Email
+administrator.picture = Imagen
+
+lessor.dashboard = Ver tablero
+
+administrator.submit = Guardar
+administrator.cancel = Cancelar
+
+socialIdentity.nick			= Nick
+socialIdentity.network		= Network
+socialIdentity.url			= Url
+socialIdentity.submit		= Save
+socialIdentity.cancel		= Cancel
+
+lessor.commit.error			= Error commit
+administrator.commit.save	= Datos actualizados
+
+dashboard.avg.request.lessor.accepted = La media de reservas aceptadas por arrendatario.
+dashboard.avg.request.lessor.denied = La media de reservas denegadas por arrendatario.
+dashboard.avg.request.tenant.accepted = La media de reservas aceptadas por inquilino.
+dashboard.avg.request.tenant.denied = La media de reservas denegadas por inquilino.
+dashboard.request.lessor.accepted = Los arrendatarios que han aprobado más peticiones.
+dashboard.request.lessor.denied = Los arrendatarios que han denegado más peticiones.
+dashboard.request.lessor.pending = Los arrendatarios que tienen más peticiones pendientes.
+dashboard.request.tenant.accepted = Los inquilinos que tienen más peticiones aceptadas.
+dashboard.request.tenant.denied = Los inquilinos que tienen más peticiones denegadas.
+dashboard.request.tenant.pending = Los inquilinos que tienen más peticiones pendientes.
+dashboard.ratio.lessor.max = Los arrendatarios cuyo ratio de peticiones contra las peticiones aprobadas es máximo.
+dashboard.ratio.lessor.min = Los arrendatarios cuyo ratio de peticiones contra las peticiones aprobadas es mínimo.
+dashboard.ratio.tenant.max = Los inquilinos cuyo ratio de peticiones contra las peticiones aprobadas es máximo.
+dashboard.ratio.tenant.min = Los inquilinos cuyo ratio de peticiones contra las peticiones aprobadas es mínimo.
+dashboard.ratio.audits = El minimo, la media y el maximo de auditorías de una propiedad
+dashboard.attname.uses = Atributos predefinidos ordenados por uso
+dashboard.ratio.social.lessor = El minimo, la media y el maximo de Ids sociales de un propietario
+dashboard.ratio.social.tenant = El minimo, la media y el maximo de Ids sociales de un inquilino
+dashboard.ratio.social.auditor = El minimo, la media y el maximo de Ids sociales de un auditor
+dashboard.ratio.social.administrator = El minimo, la media y el maximo de Ids sociales de un administrador
+dashboard.min.result.per.finder	= El mínimo de resultados por buscador
+dashboard.max.result.per.finder = El máximo de resultados por buscador
+dashboard.avg.result.per.finder = La media de resultados por buscador
+
+administrator.dashboard.property.audits = Propiedades ordenadas por número de auditorías
+administrator.dashboard.property.bookings = Propiedades ordenadas por número de reservas
+administrator.dashboard.property.bookings.accepted = Propiedades ordenadas por número de reservas aceptadas
+administrator.dashboard.property.bookings.pending = Propiedades ordenadas por número de reservas pendientes
+administrator.dashboard.property.bookings.denied = Propiedades ordenadas por número de reservas denegadas

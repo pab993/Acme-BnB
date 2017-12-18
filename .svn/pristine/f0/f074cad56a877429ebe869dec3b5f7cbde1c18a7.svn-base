@@ -1,0 +1,411 @@
+
+package services;
+
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.Validator;
+
+import repositories.LessorRepository;
+import security.Authority;
+import security.LoginService;
+import security.UserAccount;
+import domain.Booking;
+import domain.Fee;
+import domain.Lessor;
+import domain.Property;
+import domain.SocialIdentity;
+import forms.LessorForm;
+
+@Transactional
+@Service
+public class LessorService {
+
+	// Managed Repository 
+	// ====================================================================================
+
+	@Autowired
+	private LessorRepository	lessorRepository;
+
+	// Supported Services 
+	// ====================================================================================
+
+	@Autowired
+	private PropertyService		propertyService;
+
+	@Autowired
+	private FeeService			feeService;
+
+
+	// Constructor methods
+	// ====================================================================================
+
+	public LessorService() {
+		super();
+	}
+
+	// Simple CRUDS methods 
+	// ====================================================================================
+
+	public Lessor findOne(int lessorId) {
+
+		Lessor result;
+		Assert.notNull(lessorId);
+
+		result = lessorRepository.findOne(lessorId);
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Lessor findOneByProperty(int id) {
+
+		Assert.notNull(id);
+		Lessor result = lessorRepository.findOneByProperty(id);
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Lessor create() {
+		UserAccount userAccount;
+		Lessor result;
+		Collection<Authority> authorities;
+		Double amount;
+
+		userAccount = new UserAccount();
+		result = new Lessor();
+		Authority authority = new Authority();
+		authorities = new ArrayList<Authority>();
+
+		amount = calculateAmount(result);
+		authority.setAuthority("LESSOR");
+		result.setAmount(amount);
+		authorities.add(authority);
+		userAccount.setAuthorities(authorities);
+		result.setUserAccount(userAccount);
+
+		return result;
+	}
+
+	public Lessor save(Lessor lessor) {
+
+		Assert.notNull(lessor);
+		//		String password = lessor.getUserAccount().getPassword();
+		//		Md5PasswordEncoder encoder = new Md5PasswordEncoder();
+		//		String md5 = encoder.encodePassword(password, null);
+		//		lessor.getUserAccount().setPassword(md5);
+
+		Lessor saved = lessorRepository.save(lessor);
+
+		return saved;
+	}
+
+	public Collection<Lessor> findAll() {
+
+		Collection<Lessor> lessors;
+
+		lessors = lessorRepository.findAll();
+		Assert.notNull(lessors);
+
+		return lessors;
+	}
+
+	// Others bussines methods
+	// ====================================================================================
+
+	public Double calculateAmount(Lessor lessor) {
+		Assert.notNull(lessor);
+
+		Collection<Property> properties;
+		Double result = null;
+		int bookings = 0;
+
+		properties = propertyService.findAllByLessor(lessor);
+		Collection<Fee> fees = feeService.findAll();
+		for (Fee uniqueFee : fees) {
+			Fee fee = uniqueFee;
+
+			for (Property p : properties) {
+				if (properties.isEmpty()) {
+					result = 0.0;
+				} else {
+					bookings += propertyService.numBookingsAccepted(p);
+					result = fee.getAmount() * bookings * 1.0;
+				}
+			}
+			break;
+		}
+		return result;
+	}
+
+	public Double calculateAmount2(Lessor lessor, Booking booking) {
+		Assert.notNull(lessor);
+		Assert.notNull(booking);
+
+		Double result = null;
+		Collection<Fee> fees = feeService.findAll();
+		for (Fee uniqueFee : fees) {
+			Fee fee = uniqueFee;
+
+			if (booking.getStatus().equals("ACCEPTED")) {
+				result = lessor.getAmount() + fee.getAmount();
+				lessor.setAmount(result);
+				save(lessor);
+				break;
+			} else {
+				result = lessor.getAmount();
+				lessor.setAmount(result);
+				save(lessor);
+				break;
+			}
+		}
+		return result;
+
+	}
+	public Lessor findPrincipal() {
+
+		Lessor principal;
+
+		principal = lessorRepository.findPrincipal(LoginService.getPrincipal().getId());
+		Assert.notNull(principal, "principal is not lessor");
+
+		return principal;
+	}
+
+	public Lessor reconstruct(LessorForm lessorForm, BindingResult binding) {
+		Lessor lessor;
+		Collection<SocialIdentity> socialIdentities;
+		Collection<Property> properties;
+
+		lessor = new Lessor();
+		socialIdentities = new ArrayList<SocialIdentity>();
+		properties = new ArrayList<Property>();
+
+		Md5PasswordEncoder encode = new Md5PasswordEncoder();
+		String hash = encode.encodePassword(lessorForm.getPassword(), null);
+
+		Authority authority = new Authority();
+		UserAccount userAccount = new UserAccount();
+
+		authority.setAuthority("LESSOR");
+		userAccount.addAuthority(authority);
+		lessor.setUserAccount(userAccount);
+		lessor.getUserAccount().setUsername(lessorForm.getUsername());
+		lessor.setName(lessorForm.getName());
+		lessor.setSurname(lessorForm.getSurname());
+		lessor.setEmail(lessorForm.getEmail());
+		lessor.setPhone(lessorForm.getPhone());
+		lessor.setPicture(lessorForm.getPicture());
+		lessor.setSocialIdentities(socialIdentities);
+		lessor.setProperties(properties);
+		lessor.setCreditCard(lessorForm.getCreditCard());
+		lessor.setAmount(0.0);
+
+		long l = 10;
+		Date d = new Date(System.currentTimeMillis() - l);
+
+		if (!lessorForm.getPassword().equals(lessorForm.getRepeatPassword())) {
+			ObjectError error = new ObjectError(hash, "Password mismatch");
+			binding.addError(error);
+		} else {
+			lessor.getUserAccount().setPassword(hash);
+		}
+
+		return lessor;
+	}
+
+	public int[] stringToArray(String number) {
+		char[] a = number.toCharArray();
+		int[] n = new int[a.length];
+
+		for (int i = 0; i < a.length; i++) {
+			int x = Character.getNumericValue(a[i]);
+			n[i] = x;
+		}
+		return n;
+	}
+	public boolean verificacionLuhn(int[] digits) {
+		int sum = 0;
+		int length = digits.length;
+		for (int i = 0; i < length; i++) {
+			// sacar los digitos en orden inverso
+			int digit = digits[length - i - 1];
+
+			// cada segundo número se multiplica por 2
+			if (i % 2 == 1) {
+				digit = digit * 2;
+			}
+			if (digit > 9) {
+				digit = digit - 9;
+			}
+			sum = sum + digit;
+		}
+		return sum % 10 == 0;
+	}
+
+
+	@Autowired
+	private Validator	validator;
+
+
+	public Lessor reconstruct(Lessor lessor, BindingResult binding) {
+		// TODO Auto-generated method stub
+		Lessor result;
+
+		if (lessor.getId() == 0)
+			result = lessor;
+		else {
+			result = lessorRepository.findPrincipal(LoginService.getPrincipal().getId());
+
+			result.setName(lessor.getName());
+			result.setSurname(lessor.getSurname());
+			result.setPhone(lessor.getPhone());
+			result.setEmail(lessor.getEmail());
+			result.setPicture(lessor.getPicture());
+
+			validator.validate(result, binding);
+		}
+
+		return result;
+	}
+
+	public Double avgAcceptedRequestPerLessor() {
+		Double result;
+
+		result = lessorRepository.avgAcceptedRequestPerLessor();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Double avgDeniedRequestPerLessor() {
+		Double result;
+
+		result = lessorRepository.avgDeniedRequestPerLessor();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Collection<Lessor> lessorsMoreAcceptedRequest() {
+		Collection<Lessor> result;
+
+		result = lessorRepository.lessorsMoreAcceptedRequest();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Collection<Lessor> lessorsMoreDeniedRequest() {
+		Collection<Lessor> result;
+
+		result = lessorRepository.lessorsMoreDeniedRequest();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Collection<Lessor> lessorsMorePendingRequest() {
+		Collection<Lessor> result;
+
+		result = lessorRepository.lessorsMoreDeniedRequest();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Collection<Lessor> ratioLessorMax() {
+		Collection<Lessor> result;
+
+		result = lessorRepository.ratioLessorMax();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Collection<Lessor> ratioLessorMin() {
+		Collection<Lessor> result;
+
+		result = lessorRepository.ratioLessorMin();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Double minSocialIdLessor() {
+		Double result;
+
+		result = lessorRepository.minSocialIdLessor();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Double avgSocialIdLessor() {
+		Double result;
+
+		result = lessorRepository.avgSocialIdLessor();
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Double maxSocialIdLessor() {
+		Double result;
+		result = lessorRepository.maxSocialIdLessor();
+		Assert.notNull(result);
+		return result;
+	}
+
+	public Boolean sieteDias(int month, int year) {
+		Boolean result = true;
+
+		long l = 10;
+		Date d = new Date(System.currentTimeMillis() - l);
+		Calendar c = Calendar.getInstance();
+		c.setTime(d);
+
+		if (c.get(Calendar.YEAR) > year) {
+			result = false;
+		} else if (c.get(Calendar.YEAR) == year && c.get(Calendar.MONTH) + 1 >= month) {
+			result = false;
+		} else if (c.get(Calendar.YEAR) == year && c.get(Calendar.MONTH) + 1 == month + 1 && c.get(Calendar.DAY_OF_MONTH) - 30 < 7) {
+			result = false;
+		}
+		Assert.isTrue(result);
+		return result;
+	}
+
+	public String censureCreditCard(String numero) {
+
+		String[] parts = numero.split("");
+
+		int tamaño = parts.length;
+
+		for (int i = 5; i < tamaño - 4; i++) {
+
+			parts[i] = "*";
+
+		}
+
+		String stringFinal = "";
+
+		for (String string : parts) {
+
+			stringFinal = stringFinal + string;
+
+		}
+		return stringFinal;
+	}
+}
